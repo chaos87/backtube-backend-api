@@ -41,7 +41,7 @@ app.post('/bandcamp/songs', function (req, res) {
 app.post('/youtube/download', (req, res) => {
     // create Youtube downloader instance
     const YD = new YoutubeMp3Downloader({
-        "ffmpegPath": "/usr/local/bin/ffmpeg",        // Where is the FFmpeg binary located?
+        "ffmpegPath": "/app/vendor/ffmpeg/ffmpeg",        // Where is the FFmpeg binary located?
         "outputPath": __dirname + "/public/yt",    // Where should the downloaded and encoded files be stored?
         "youtubeVideoQuality": "highest",       // What video quality should be used?
         "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?

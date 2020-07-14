@@ -1,0 +1,140 @@
+      @prefix xsi: <http://xsilence.net/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+      @prefix owl: <http://www.w3.org/2002/07/owl#> .
+      @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+      @prefix schema: <http://schema.org/> .
+
+
+
+      # classes (-> GraphQL types )
+
+      owl:Thing a rdfs:Class ;
+          rdfs:comment "Anything" .
+
+      xsi:Organization a rdfs:Class ;
+          rdfs:comment "An organization (used for record label)" ;
+          rdfs:subClassOf owl:Thing .
+
+      xsi:Place a rdfs:Class ;
+          rdfs:comment "A place where music events happen" ;
+          rdfs:subClassOf owl:Thing .
+
+      xsi:MusicGroup a rdfs:Class ;
+          rdfs:comment "A band or solo musician" ;
+          rdfs:subClassOf owl:Thing .
+
+      xsi:MusicAlbum a rdfs:Class ;
+          rdfs:comment "A record/album released by the artist" ;
+          rdfs:subClassOf owl:Thing .
+
+      xsi:MusicEvent a rdfs:Class ;
+          rdfs:comment "A music event is a live music performance in front of an audience" ;
+          rdfs:subClassOf owl:Thing .
+
+      # properties ( -> GraphQL fields )
+
+      rdfs:name a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Name of the entity" ;
+          schema:domainIncludes owl:Thing ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:description a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Description of the entity" ;
+          schema:domainIncludes owl:Thing ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:image a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Image URL" ;
+          schema:domainIncludes owl:Thing ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:sameAs a rdf:Property ;
+          rdfs:comment "official pages" ;
+          schema:domainIncludes xsi:MusicGroup ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:album a rdf:Property ;
+          rdfs:comment "Albums released by the artist" ;
+          schema:domainIncludes xsi:MusicGroup ;
+          schema:rangeIncludes xsi:MusicAlbum .
+
+      xsi:release a rdf:Property ;
+          rdfs:comment "Albums released by the label" ;
+          schema:domainIncludes xsi:Organization ;
+          schema:rangeIncludes xsi:MusicAlbum .
+
+      xsi:artist a rdf:Property ;
+          rdfs:comment "Artists the record label has signed" ;
+          schema:domainIncludes xsi:Organization ;
+          schema:rangeIncludes xsi:MusicGroup .
+
+      xsi:event a rdf:Property ;
+          rdfs:comment "Concert performed by the artist" ;
+          schema:domainIncludes xsi:MusicGroup ;
+          schema:rangeIncludes xsi:MusicEvent .
+
+      xsi:label a rdf:Property ;
+          rdfs:comment "Record labels the artist is signed on" ;
+          schema:domainIncludes xsi:MusicGroup ;
+          schema:rangeIncludes xsi:Organization .
+
+      xsi:show a rdf:Property ;
+          rdfs:comment "Concerts hosted at this venue" ;
+          schema:domainIncludes xsi:Place ;
+          schema:rangeIncludes xsi:MusicEvent .
+
+      xsi:datePublished a rdf:Property ;
+          rdfs:comment "Album's date of publication" ;
+          schema:domainIncludes xsi:MusicAlbum ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:eventDate a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Event's date" ;
+          schema:domainIncludes xsi:MusicEvent ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:producer a rdf:Property ;
+          rdfs:comment "An Organization producing albums" ;
+          schema:domainIncludes xsi:MusicAlbum ;
+          schema:rangeIncludes xsi:Organization .
+
+      xsi:byArtist a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "The artist who created the album" ;
+          schema:domainIncludes xsi:MusicAlbum ;
+          schema:rangeIncludes xsi:MusicGroup .
+
+      xsi:format a rdf:Property ;
+          rdfs:comment "The physical format of the album" ;
+          schema:domainIncludes xsi:MusicAlbum ;
+          schema:rangeIncludes xsd:string .
+
+      xsi:average a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "The average rating of the album/event" ;
+          schema:domainIncludes xsi:MusicEvent ;
+          schema:rangeIncludes xsd:decimal .
+
+      xsi:average a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "The average rating of the album/event" ;
+          schema:domainIncludes xsi:MusicAlbum ;
+          schema:rangeIncludes xsd:decimal .
+
+      xsi:performer a rdf:Property ;
+          rdfs:comment "The artist who performed during an event" ;
+          schema:domainIncludes xsi:MusicEvent ;
+          schema:rangeIncludes xsi:MusicGroup .
+
+      xsi:location a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Place where the event happened" ;
+          schema:domainIncludes xsi:MusicEvent ;
+          schema:rangeIncludes xsi:Place .
+
+      xsi:containedInPlace a rdf:Property, owl:FunctionalProperty ;
+          rdfs:comment "Relation of contenance between 2 places" ;
+          schema:domainIncludes xsi:Place ;
+          schema:rangeIncludes xsi:Place .
+
+      xsi:related a rdf:Property ;
+          rdfs:comment "Related artists" ;
+          schema:domainIncludes xsi:MusicGroup ;
+          schema:rangeIncludes xsi:MusicGroup .

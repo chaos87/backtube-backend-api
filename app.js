@@ -56,7 +56,7 @@ app.post('/youtube/download', (req, res) => {
 
     YD.on("error", function(error) {
         console.log('ERROR')
-        res.status(400).send({"message": 'Something went wrong:' + error.message})
+        res.status(400).send({"message": 'Something went wrong:' + error})
     });
 
     YD.on("progress", function(progress) {

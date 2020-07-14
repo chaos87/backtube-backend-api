@@ -10,10 +10,8 @@ const { promisify } = require('util');
 const Fs = require('fs')
 
 
-var getAlbumInfo = promisify(bandcamp.getAlbumInfo);
-var getAlbumUrls = promisify(bandcamp.getAlbumUrls);
-
-
+const getAlbumInfo = promisify(bandcamp.getAlbumInfo);
+const getAlbumUrls = promisify(bandcamp.getAlbumUrls);
 
 const app = express();
 app.use(express.json())

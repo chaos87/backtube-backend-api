@@ -1,1 +1,1 @@
-chmod -R +x /app/vendor/ffmpeg/
+sudo chmod -R +x /app/vendor/ffmpeg

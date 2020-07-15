@@ -55,7 +55,7 @@ app.post('/youtube/download', (req, res) => {
     });
 
     YD.on("error", function(error) {
-        console.log('ERROR')
+        console.log('ERROR', error)
         res.status(400).send({"message": 'Something went wrong:' + error})
     });
 

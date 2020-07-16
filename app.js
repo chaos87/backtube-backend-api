@@ -51,7 +51,8 @@ app.post('/youtube/download', (req, res) => {
 
     YD.on("finished", function(err, data) {
         console.log('Finished downloading')
-        res.send(data);
+        res.write(data);
+        res.end();
     });
 
     YD.on("error", function(error) {

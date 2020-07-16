@@ -62,7 +62,8 @@ app.post('/youtube/download', (req, res) => {
     });
 
     YD.on("progress", function(progress) {
-        res.write();
+        console.log('Progress', progress)
+        res.write(JSON.stringify(progress));
     });
 });
 

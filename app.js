@@ -46,7 +46,7 @@ app.post('/youtube/download', (req, res) => {
         "queueParallelism": 2,                  // How many parallel downloads/encodes should be started?
         "progressTimeout": 2000                 // How long should be the interval of the progress reports
     });
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Content-Type', 'application/json');
     console.log('Start downloading')
     YD.download(req.body.videoId, req.body.videoId + '.mp3');
 

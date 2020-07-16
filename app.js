@@ -52,7 +52,7 @@ app.post('/youtube/download', (req, res) => {
 
     YD.on("finished", function(err, data) {
         console.log('Finished downloading')
-        res.status(200).json(data);
+        res.status(200).write(JSON.stringify(data));
         res.end();
     });
 
@@ -62,7 +62,7 @@ app.post('/youtube/download', (req, res) => {
     });
 
     YD.on("progress", function(progress) {
-        res.write(JSON.stringify(progress));
+        res.write();
     });
 });
 

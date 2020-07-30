@@ -57,7 +57,7 @@ app.post('/youtube/search', (req, res) => {
 });
 app.post('/youtube/searchById', (req, res) => {
     const opts = req.body.type == 'playlist'? {listId: req.body.id} :
-                 {videoId: req.body.id}
+                 { videoId: req.body.id }
     YoutubeSearcher( opts, function ( err, r ) {
       if ( err ) return res.status(400).send(err.message)
 

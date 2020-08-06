@@ -13,6 +13,7 @@ const socketIo = require("socket.io");
 
 const getAlbumInfo = promisify(bandcamp.getAlbumInfo);
 const getAlbumUrls = promisify(bandcamp.getAlbumUrls);
+const bandcampSearch = promisify(bandcamp.search);
 
 const app = express();
 app.use(express.json())
@@ -21,6 +22,16 @@ app.use(express.static('public'));
 const server = http.createServer(app);
 
 const io = socketIo(server);
+
+app.post('/bandcamp/search', function (req, res) {
+    return bandcampSearch(req.body).then(
+        response => {
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.send(response)
+        }
+    )
+    .catch(e => res.status(400).send(e.stack))
+})
 
 app.post('/bandcamp/albums', function (req, res) {
     return getAlbumUrls(req.body.url).then(

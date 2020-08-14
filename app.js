@@ -84,6 +84,10 @@ app.get('/youtube/stream', (req, res) => {
     } catch (exception) {
       res.status(500).send(exception)
     }
+    process.on('unhandledRejection', error => {
+      // Prints "unhandledRejection woops!"
+      res.status(500).send(error)
+    });
 });
 
 app.post('/cleanup', (req, res) => {

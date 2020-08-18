@@ -56,6 +56,7 @@ app.post('/youtube/search', (req, res) => {
       const videos = r.videos
       const playlists = r.playlists || r.lists
 
+      res.setHeader('Access-Control-Allow-Origin', '*');
       return res.status(200).send({"data": req.body.type == 'playlist' ?
                                     playlists : req.body.type == 'video' ?
                                     videos : r})
@@ -66,6 +67,7 @@ app.post('/youtube/searchById', (req, res) => {
     const opts = req.body.type == 'playlist'? {listId: req.body.id} :
                  { videoId: req.body.id }
     YoutubeSearcher( opts, function ( err, r ) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
       if ( err ) return res.status(400).send(err.message)
 
       return res.status(200).send({"data": r})
@@ -75,6 +77,7 @@ app.post('/youtube/searchById', (req, res) => {
 
 app.get('/youtube/stream', (req, res) => {
     const requestUrl = `http://youtube.com/watch?v=${req.query.videoId}`
+    res.setHeader('Access-Control-Allow-Origin', '*');
     try {
       YoutubeStream(requestUrl).pipe(res)
     } catch (exception) {
@@ -88,6 +91,7 @@ app.get('/youtube/stream', (req, res) => {
 
 app.post('/cleanup', (req, res) => {
     // Check api key
+    res.setHeader('Access-Control-Allow-Origin', '*');
     if ( 'key' in req.body && req.body.key == "gLCZU4KfPBmxMNQm") {
         console.log('Start cleanup')
         // current date
@@ -116,6 +120,7 @@ app.post('/cleanup', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.send({"message": "alive & kicking!"})
 })
 

@@ -1,14 +1,8 @@
-const yts = require( 'yt-search' )
+const fs = require('fs');
+const ytdl = require('ytdl-core');
+// TypeScript: import ytdl from 'ytdl-core'; with --esModuleInterop
+// TypeScript: import * as ytdl from 'ytdl-core'; with --allowSyntheticDefaultImports
+// TypeScript: import ytdl = require('ytdl-core'); with neither of the above
 
-yts( 'superman theme', function ( err, r ) {
-  if ( err ) throw err
-
-  const videos = r.videos
-  videos.forEach( function ( v ) {
-    const views = String( v.views ).padStart( 10, ' ' )
-    console.log( `${ views } | ${ v.title } (${ v.timestamp }) | ${ v.author.name }` )
-  } )
-} )
-
-// promises also supported
-// const r = await yts( 'superman theme' )
+ytdl('http://www.youtube.com/watch?v=A02s8omM_hI')
+  .pipe(fs.createWriteStream('video.flv'));

@@ -3,10 +3,12 @@ const cognitoRouter = express.Router();
 global.fetch = require('node-fetch');
 global.navigator = () => null;
 
+const COGNITO_APP_ID = "13jgajqggg04mq38g14iv6lba5";
+
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const poolData = {
    UserPoolId: "us-east-2_a7zHnPmVg",
-   ClientId: "13jgajqggg04mq38g14iv6lba5"
+   ClientId: COGNITO_APP_ID
 };
 
 const pool_region = "us-east-2";
@@ -47,14 +49,31 @@ cognitoRouter.post('/login', (req, res) => {
      var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
      cognitoUser.authenticateUser(authenticationDetails, {
          onSuccess: function (result) {
-            var accesstoken = result.getAccessToken()//.getJwtToken();
-            res.send(JSON.stringify(accesstoken))
-
+            res.send(JSON.stringify(result))
          },
          onFailure: (function (err) {
             res.status(401).send(err)
         })
     })
+});
+
+cognitoRouter.post('/refresh', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var refreshToken = req.body.refreshToken;
+    var userName = req.body.username;
+    var userData = {
+        Username: userName,
+        Pool: userPool
+    }
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    var token = new AmazonCognitoIdentity.CognitoRefreshToken({RefreshToken: refreshToken});
+    cognitoUser.refreshSession(token,
+      function (err, result) {
+          if (err) {
+            return res.status(401).send(err);
+          }
+          res.json(result)
+    });
 });
 
 module.exports = cognitoRouter;

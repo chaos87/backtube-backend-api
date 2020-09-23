@@ -27,6 +27,12 @@
     "socket.io": "^2.3.0",
     "util": "^0.12.3",
     "youtube-audio-stream": "^0.3.6",
-    "ytdl-core": "^3.2.2"
+    "ytdl-core": "^3.2.2",
+    "ajv": "^4.11.8",
+    "cheerio": "^0.22.0",
+    "json5": "^0.5.1",
+    "linez": "^4.1.4",
+    "scrape-it": "^3.3.2",
+    "tinyreq": "^3.2.5"
   }
 }

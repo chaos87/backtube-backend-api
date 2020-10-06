@@ -8,10 +8,10 @@ var JSON5 = require('json5');
 
 // add search-result Schema
 var ajv = new Ajv();
-ajv.addSchema(require('./schemas/search-result.json'), 'search-result');
-ajv.addSchema(require('./schemas/album-product.json'), 'album-product');
-ajv.addSchema(require('./schemas/album-info.json'), 'album-info');
-ajv.addSchema(require('./schemas/tag-result.json'), 'tag-result');
+ajv.addSchema(require('../schemas/search-result.json'), 'search-result');
+ajv.addSchema(require('../schemas/album-product.json'), 'album-product');
+ajv.addSchema(require('../schemas/album-info.json'), 'album-info');
+ajv.addSchema(require('../schemas/tag-result.json'), 'tag-result');
 
 
 linez.configure({
@@ -238,10 +238,10 @@ exports.parseAlbumInfo = function (html, albumUrl) {
           listItem: 'table#track_table tr.track_row_view',
           data: {
             name: {
-              selector: 'span[itemprop=name]'
+              selector: '.track-title'
             },
             url: {
-              selector: 'a[itemprop=url]',
+              selector: 'td.title-col > div > a',
               attr: 'href',
               convert: function (href) {
                 if (!href) return null
@@ -271,17 +271,24 @@ exports.parseAlbumInfo = function (html, albumUrl) {
       }
     }
   }
-  var raw = this.extractJavascriptObjectVariable(html.replace(/&quot;/g, '"'), 'data-tralbum');
-  // The only javascript in the variable is the concatenation of the base url
-  // with the current album path. We nned to do it yourself.
-  // Ex:
-  //  url: "http://musique.coeurdepirate.com" + "/album/blonde",
-  raw = raw ? raw.replace('" + "', '') : ''
-  try {
-    object.raw = JSON5.parse(raw);
-  } catch (error) {
-    console.error(error);
+  // Parse raw.
+  var scriptWithRaw = $('script[data-tralbum]');
+  if (scriptWithRaw.length > 0) {
+    object.raw = scriptWithRaw.data('tralbum');
+  } else {
+    var raw = this.extractJavascriptObjectVariable(html, 'TralbumData');
+    // The only javascript in the variable is the concatenation of the base url
+    // with the current album path. We nned to do it yourself.
+    // Ex:
+    //  url: "http://musique.coeurdepirate.com" + "/album/blonde",
+    raw = raw ? raw.replace('" + "', '') : ''
+    try {
+      object.raw = JSON5.parse(raw);
+    } catch (error) {
+      console.error(error);
+    }
   }
+
   object.url = albumUrl;
   // validate through JSON schema
   if (ajv.validate('album-info', object)) {

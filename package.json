@@ -6,10 +6,12 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "ajv": "^4.11.8",
     "amazon-cognito-identity-js": "^4.3.4",
     "aws-sdk": "^2.742.0",
-    "bandcamp-scraper": "^1.2.6",
+    "bandcamp-scraper": "^1.2.7",
     "body-parser": "^1.19.0",
+    "cheerio": "^0.22.0",
     "cognito-express": "^2.0.18",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -18,21 +20,19 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "json5": "^0.5.1",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.4",
+    "linez": "^4.1.4",
     "morgan": "~1.9.1",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "request": "^2.88.2",
+    "scrape-it": "^3.3.2",
     "socket.io": "^2.3.0",
+    "tinyreq": "^3.2.5",
     "util": "^0.12.3",
     "youtube-audio-stream": "^0.3.6",
-    "ytdl-core": "^3.2.2",
-    "ajv": "^4.11.8",
-    "cheerio": "^0.22.0",
-    "json5": "^0.5.1",
-    "linez": "^4.1.4",
-    "scrape-it": "^3.3.2",
-    "tinyreq": "^3.2.5"
+    "ytdl-core": "^3.2.2"
   }
 }

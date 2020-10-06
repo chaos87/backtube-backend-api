@@ -16,7 +16,7 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 cognitoRouter.post('/register', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    var name = req.body.name;
+    var name = req.body.username;
     var email = req.body.email;
     var password = req.body.password;
     var attributeList = [];
@@ -24,19 +24,19 @@ cognitoRouter.post('/register', (req, res) => {
     attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({ Name: "email", Value: email }));
     try {
         userPool.signUp(name, password, attributeList, null, function (err, result) {
-          if (err)
-              callback(err);
-          var cognitoUser = result.user;
-          res.send(JSON.stringify(cognitoUser))
+            if (err) {
+              return res.status(400).json({"error": err.message});
+            }
+            res.json(result)
         })
-    } catch (exception) {
-        res.status(400).send(exception)
+    } catch (err) {
+        res.status(400).json({"error": err.message})
     }
 })
 
 cognitoRouter.post('/login', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    var userName = req.body.name;
+    var userName = req.body.username;
     var password = req.body.password;
     var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
          Username: userName,
@@ -49,10 +49,10 @@ cognitoRouter.post('/login', (req, res) => {
      var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
      cognitoUser.authenticateUser(authenticationDetails, {
          onSuccess: function (result) {
-            res.send(JSON.stringify(result))
+            res.json(result)
          },
          onFailure: (function (err) {
-            res.status(401).send(err)
+            res.status(401).json({"error": err.message})
         })
     })
 });
@@ -70,7 +70,42 @@ cognitoRouter.post('/refresh', (req, res) => {
     cognitoUser.refreshSession(token,
       function (err, result) {
           if (err) {
-            return res.status(401).send(err);
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
+cognitoRouter.post('/confirm', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var code = req.body.code;
+    var userName = req.body.username;
+    var userData = {
+        Username: userName,
+        Pool: userPool
+    }
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    cognitoUser.confirmRegistration(code, true,
+      function (err, result) {
+          if (err) {
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
+cognitoRouter.post('/sendConfirmCode', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var userName = req.body.username;
+    var userData = {
+        Username: userName,
+        Pool: userPool
+    }
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    cognitoUser.resendConfirmationCode(
+      function (err, result) {
+          if (err) {
+            return res.status(400).json({"error": err.message});
           }
           res.json(result)
     });

@@ -1,5 +1,7 @@
 const express = require('express');
 const cognitoRouter = express.Router();
+const AWS = require('aws-sdk');
+const moment = require('moment');
 global.fetch = require('node-fetch');
 global.navigator = () => null;
 
@@ -16,18 +18,41 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 cognitoRouter.post('/register', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    var name = req.body.username;
-    var email = req.body.email;
-    var password = req.body.password;
-    var attributeList = [];
+    const name = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
+    const attributeList = [];
+
+    // dynamodb config
+    const docClient = new AWS.DynamoDB.DocumentClient();
 
     attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({ Name: "email", Value: email }));
+    attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({ Name: "preferred_username", Value: name }));
     try {
         userPool.signUp(name, password, attributeList, null, function (err, result) {
             if (err) {
               return res.status(400).json({"error": err.message});
             }
-            res.json(result)
+            const currentDateTime = moment().format('yyyy-mm-ddThh:mm:ss');
+            const params = {
+                TableName: "user-playlist",
+                Item:{
+                    "PK": "USER#" + result.userSub,
+                    "SK": "USER#" + result.userSub,
+                    "username": result.user.username,
+                    "createdAt": currentDateTime,
+                    "updatedAt": currentDateTime
+                }
+            };
+            console.log("Adding a new user to user-playlist table...");
+            docClient.put(params, function(err, data) {
+                if (err) {
+                    return res.status(400).json({"error": err.message});
+                } else {
+                    console.log("Added item:", JSON.stringify(data, null, 2));
+                    res.json(result)
+                }
+            });
         })
     } catch (err) {
         res.status(400).json({"error": err.message})
@@ -105,6 +130,70 @@ cognitoRouter.post('/sendConfirmCode', (req, res) => {
     cognitoUser.resendConfirmationCode(
       function (err, result) {
           if (err) {
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
+cognitoRouter.get('/users', (req, res) => {
+    var params = {
+      UserPoolId: poolData.UserPoolId,
+      AttributesToGet: [
+        'email',
+      ],
+    };
+
+    AWS.config.update({ region: pool_region, 'accessKeyId': process.env.AWS_ACCESS_KEY_ID, 'secretAccessKey': process.env.AWS_SECRET_ACCESS_KEY });
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+    cognitoidentityserviceprovider.listUsers(params, (err, data) => {
+        if (err) {
+            return res.status(400).json({"error": err.message});
+        }
+        else {
+            res.json(data)
+        }
+    })
+});
+
+cognitoRouter.get('/user/:user', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var userName = req.params.user;
+    var userData = {
+        Username: userName,
+        UserPoolId: poolData.UserPoolId
+    }
+    AWS.config.update({ region: pool_region, 'accessKeyId': process.env.AWS_ACCESS_KEY_ID, 'secretAccessKey': process.env.AWS_SECRET_ACCESS_KEY });
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+    cognitoidentityserviceprovider.adminGetUser(userData,
+      function (err, result) {
+          if (err) {
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
+cognitoRouter.put('/user', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var userName = req.body.username;
+    var accessToken = req.body.accessToken;
+    var params = {
+      AccessToken: accessToken, /* required */
+      UserAttributes: [ /* required */
+        {
+          Name: 'preferred_username', /* required */
+          Value: userName
+        },
+        /* more items */
+      ]
+    };
+    AWS.config.update({ region: pool_region, 'accessKeyId': process.env.AWS_ACCESS_KEY_ID, 'secretAccessKey': process.env.AWS_SECRET_ACCESS_KEY });
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+    cognitoidentityserviceprovider.updateUserAttributes(params,
+      function (err, result) {
+          if (err) {
+            console.log(err)
             return res.status(400).json({"error": err.message});
           }
           res.json(result)

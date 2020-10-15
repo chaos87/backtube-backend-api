@@ -1,6 +1,16 @@
 const express = require('express');
 const cognitoExpress = require('../app')
+const AWS = require('aws-sdk');
+const moment = require('moment');
 authenticatedRouter = express.Router();
+
+// Configure aws with your accessKeyId and your secretAccessKey
+AWS.config.update({
+  region: 'us-east-2', // Put your aws region here
+  accessKeyId: process.env.AWSAccessKeyId,
+  secretAccessKey: process.env.AWSSecretKey
+})
+
 
 //Our middleware that authenticates all APIs under our 'authenticatedRoute' Router
 authenticatedRouter.use(function(req, res, next) {
@@ -17,6 +27,65 @@ authenticatedRouter.use(function(req, res, next) {
 	});
 });
 
+
+const S3_BUCKET = 'backtube'
+// Now lets export this function so we can call it from somewhere else
+authenticatedRouter.post('/uploadAvatar', (req,res) => {
+	const s3 = new aws.S3();  // Create a new instance of S3
+	const fileName = req.body.fileName;
+	const fileType = req.body.fileType;
+	// Set up the payload of what we are sending to the S3 api
+	const s3Params = {
+		Bucket: S3_BUCKET,
+		Key: fileName,
+		Expires: 500,
+		ContentType: fileType,
+		ACL: 'public-read'
+	};
+	// Make a request to the S3 API to get a signed URL which we can use to upload our file
+	s3.getSignedUrl('putObject', s3Params, (err, data) => {
+	    if(err){
+	      console.log(err);
+	      res.json({success: false, error: err})
+	    }
+	    // Data payload of what we are sending back, the url of the signedRequest and a URL where we can access the content after its saved.
+		const returnData = {
+			signedRequest: data,
+			url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+		};
+	    // Send it all back
+	    res.json({success:true, data:{returnData}});
+	});
+})
+
+authenticatedRouter.put('/profile', (req,res) => {
+	const currentDateTime = moment().format('yyyy-mm-ddThh:mm:ss');
+	const params = {
+		TableName: "user-playlist",
+		Key: {
+			"PK": "USER#" + req.body.userSub,
+			"SK": "USER#" + req.body.userSub,
+		},
+		UpdateExpression: "set updatedAt = :d, username = :u, avatar = :a",
+	    ExpressionAttributeValues: {
+	        ":u": req.body.username,
+	        ":a": req.body.avatar !== null ? req.body.avatar : "",
+			":d": currentDateTime
+	    },
+	    ReturnValues:"UPDATED_NEW"
+	};
+	console.log("Updating user in user-playlist table...");
+	const docClient = new AWS.DynamoDB.DocumentClient();
+	docClient.update(params, function(err, data) {
+		if (err) {
+			console.log(err)
+			return res.status(400).json({"error": err.message});
+		} else {
+			console.log("Added item:", JSON.stringify(data, null, 2));
+			res.json(data)
+		}
+	});
+})
 
 // Define Backtube CRUD operations
 authenticatedRouter.get('/helloWorld', (req, res) => {

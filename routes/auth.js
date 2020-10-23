@@ -33,7 +33,7 @@ cognitoRouter.post('/register', (req, res) => {
             if (err) {
               return res.status(400).json({"error": err.message});
             }
-            const currentDateTime = moment().format('yyyy-mm-ddThh:mm:ss');
+            const currentDateTime = moment().format('YYYY-MM-DDTHH:mm:ss');
             const params = {
                 TableName: "user-playlist",
                 Item:{

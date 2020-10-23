@@ -34,6 +34,6 @@
     "tinyreq": "^3.2.5",
     "util": "^0.12.3",
     "youtube-audio-stream": "^0.3.6",
-    "ytdl-core": "^3.4.0"
+    "ytdl-core": "^3.4.2"
   }
 }

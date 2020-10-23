@@ -31,7 +31,7 @@ authenticatedRouter.use(function(req, res, next) {
 const S3_BUCKET = 'backtube'
 // Now lets export this function so we can call it from somewhere else
 authenticatedRouter.post('/uploadAvatar', (req,res) => {
-	const s3 = new aws.S3();  // Create a new instance of S3
+	const s3 = new AWS.S3();  // Create a new instance of S3
 	const fileName = req.body.fileName;
 	const fileType = req.body.fileType;
 	// Set up the payload of what we are sending to the S3 api
@@ -54,24 +54,30 @@ authenticatedRouter.post('/uploadAvatar', (req,res) => {
 			url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
 		};
 	    // Send it all back
-	    res.json({success:true, data:{returnData}});
+	    res.json(returnData);
 	});
 })
 
 authenticatedRouter.put('/profile', (req,res) => {
-	const currentDateTime = moment().format('yyyy-mm-ddThh:mm:ss');
+	const currentDateTime = moment().format('YYYY-MM-DDTHH:mm:ss');
+	const updateAvatar = 'avatar' in req.body ? ", avatar = :a" : "";
+	const UpdateExpression = "set updatedAt = :d, username = :u" + updateAvatar;
+	const ExpressionAttributeValues = {
+		":u": req.body.username,
+		":d": currentDateTime
+	}
+	if (updateAvatar) {
+		ExpressionAttributeValues[":a"] = req.body.avatar;
+	}
+
 	const params = {
 		TableName: "user-playlist",
 		Key: {
 			"PK": "USER#" + req.body.userSub,
 			"SK": "USER#" + req.body.userSub,
 		},
-		UpdateExpression: "set updatedAt = :d, username = :u, avatar = :a",
-	    ExpressionAttributeValues: {
-	        ":u": req.body.username,
-	        ":a": req.body.avatar !== null ? req.body.avatar : "",
-			":d": currentDateTime
-	    },
+		UpdateExpression: UpdateExpression,
+	    ExpressionAttributeValues: ExpressionAttributeValues,
 	    ReturnValues:"UPDATED_NEW"
 	};
 	console.log("Updating user in user-playlist table...");
@@ -81,8 +87,26 @@ authenticatedRouter.put('/profile', (req,res) => {
 			console.log(err)
 			return res.status(400).json({"error": err.message});
 		} else {
-			console.log("Added item:", JSON.stringify(data, null, 2));
 			res.json(data)
+		}
+	});
+})
+
+authenticatedRouter.get('/profile', (req,res) => {
+	const params = {
+		TableName: "user-playlist",
+		Key: {
+			"PK": "USER#" + req.query.userSub,
+			"SK": "USER#" + req.query.userSub,
+		}
+	};
+	const docClient = new AWS.DynamoDB.DocumentClient();
+	docClient.get(params, function(err, data) {
+		if (err) {
+			console.log(err)
+			return res.status(400).json({"error": err.message});
+		} else {
+			res.json(data.Item)
 		}
 	});
 })

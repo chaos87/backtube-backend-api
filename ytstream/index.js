@@ -28,11 +28,11 @@ function streamify (uri, opt) {
   process.nextTick(() => {
     const output = ffmpeg.format(audioFormat).pipe(stream)
 
-    ffmpeg.on('error', error => stream.emit('error', error))
-    output.on('error', error => {
-      video.end()
-      stream.emit('error', error)
-    })
+    // ffmpeg.on('error', error => stream.emit('error', error))
+    // output.on('error', error => {
+    //   video.end()
+    //   stream.emit('error', error)
+    // })
   })
 
   stream.video = video

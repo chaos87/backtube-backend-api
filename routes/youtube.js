@@ -1,5 +1,5 @@
 const express = require('express');
-const YoutubeStream = require('youtube-audio-stream');
+const YoutubeStream = require('../ytstream');
 
 youtubeRouter = express.Router();
 

@@ -35,7 +35,7 @@ function streamify (uri, opt) {
     // })
   })
 
-  // stream.video = video
+  stream.video = video
   stream.ffmpeg = ffmpeg
 
   return stream

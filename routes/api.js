@@ -4,6 +4,10 @@ const AWS = require('aws-sdk');
 const moment = require('moment');
 authenticatedRouter = express.Router();
 
+const UserController = require('../controllers/UserController.js');
+const TrackController = require('../controllers/TrackController.js');
+const PlaylistController = require('../controllers/PlaylistController.js');
+
 // Configure aws with your accessKeyId and your secretAccessKey
 AWS.config.update({
   region: 'us-east-2', // Put your aws region here
@@ -57,59 +61,21 @@ authenticatedRouter.post('/uploadAvatar', (req,res) => {
 	    res.json(returnData);
 	});
 })
-
-authenticatedRouter.put('/profile', (req,res) => {
-	const currentDateTime = moment().format('YYYY-MM-DDTHH:mm:ss');
-	const updateAvatar = 'avatar' in req.body ? ", avatar = :a" : "";
-	const UpdateExpression = "set updatedAt = :d, username = :u" + updateAvatar;
-	const ExpressionAttributeValues = {
-		":u": req.body.username,
-		":d": currentDateTime
-	}
-	if (updateAvatar) {
-		ExpressionAttributeValues[":a"] = req.body.avatar;
-	}
-
-	const params = {
-		TableName: "user-playlist",
-		Key: {
-			"PK": "USER#" + req.body.userSub,
-			"SK": "USER#" + req.body.userSub,
-		},
-		UpdateExpression: UpdateExpression,
-	    ExpressionAttributeValues: ExpressionAttributeValues,
-	    ReturnValues:"UPDATED_NEW"
-	};
-	console.log("Updating user in user-playlist table...");
-	const docClient = new AWS.DynamoDB.DocumentClient();
-	docClient.update(params, function(err, data) {
-		if (err) {
-			console.log(err)
-			return res.status(400).json({"error": err.message});
-		} else {
-			res.json(data)
-		}
-	});
-})
-
-authenticatedRouter.get('/profile', (req,res) => {
-	const params = {
-		TableName: "user-playlist",
-		Key: {
-			"PK": "USER#" + req.query.userSub,
-			"SK": "USER#" + req.query.userSub,
-		}
-	};
-	const docClient = new AWS.DynamoDB.DocumentClient();
-	docClient.get(params, function(err, data) {
-		if (err) {
-			console.log(err)
-			return res.status(400).json({"error": err.message});
-		} else {
-			res.json(data.Item)
-		}
-	});
-})
+// profile
+authenticatedRouter.put('/profile/:id', UserController.update);
+authenticatedRouter.get('/profile/:id', UserController.find);
+authenticatedRouter.get('/profile/:id/playlists', UserController.getPlaylists);
+// playlist
+authenticatedRouter.get('/playlist', PlaylistController.all);
+authenticatedRouter.post('/playlist', PlaylistController.create);
+authenticatedRouter.put('/playlist/:id', PlaylistController.update);
+authenticatedRouter.delete('/playlist/:id', PlaylistController.delete);
+authenticatedRouter.get('/playlist/:id', PlaylistController.find);
+authenticatedRouter.put('/playlist/:id/addFollower', PlaylistController.addFollower);
+// track
+authenticatedRouter.get('/track/:id', TrackController.find);
+authenticatedRouter.get('/track', TrackController.all);
+authenticatedRouter.get('/track/:id/playlists', TrackController.getPlaylists);
 
 // Define Backtube CRUD operations
 authenticatedRouter.get('/helloWorld', (req, res) => {

@@ -5,6 +5,7 @@ const express = require("express");
 const CognitoExpress = require("cognito-express");
 const cors = require('cors');
 var bodyParser = require('body-parser');
+const mongoose = require("mongoose");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,6 +19,15 @@ const cognitoExpress = new CognitoExpress({
 	tokenUse: "access", //Possible Values: access | id
 	tokenExpiration: 3600000 //Up to default expiration of 1 hour (3600000 ms)
 });
+
+// Connect to MongoDB
+mongoose
+  .connect("mongodb+srv://"+process.env.MONGO_DB_USER+":"+process.env.MONGO_DB_PASSWORD+"@"+process.env.MONGO_DB_PROJECT+".gcp.mongodb.net/backtube", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log("Successfully connect to MongoDB."))
+  .catch(err => console.error("Connection error", err));
 
 module.exports = cognitoExpress;
 

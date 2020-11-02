@@ -15,6 +15,7 @@ const poolData = {
 
 const pool_region = "us-east-2";
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+const UserModel = require('../models/User');
 
 cognitoRouter.post('/register', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,26 +34,14 @@ cognitoRouter.post('/register', (req, res) => {
             if (err) {
               return res.status(400).json({"error": err.message});
             }
-            const currentDateTime = moment().format('YYYY-MM-DDTHH:mm:ss');
-            const params = {
-                TableName: "user-playlist",
-                Item:{
-                    "PK": "USER#" + result.userSub,
-                    "SK": "USER#" + result.userSub,
-                    "username": result.user.username,
-                    "createdAt": currentDateTime,
-                    "updatedAt": currentDateTime
-                }
-            };
-            console.log("Adding a new user to user-playlist table...");
-            docClient.put(params, function(err, data) {
-                if (err) {
-                    return res.status(400).json({"error": err.message});
-                } else {
-                    console.log("Added item:", JSON.stringify(data, null, 2));
-                    res.json(result)
-                }
+            // save to mongodb
+            let newUser = new UserModel({
+                username: req.body.username,
             });
+            newUser._id = result.userSub;
+            newUser.save().then(data => {
+                res.json(result)
+            })
         })
     } catch (err) {
         res.status(400).json({"error": err.message})

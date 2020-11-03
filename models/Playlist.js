@@ -5,15 +5,15 @@ const Playlist = mongoose.model(
   new mongoose.Schema({
     title: String,
     tracks: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "Track"
     }],
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "User"
     },
     followers: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "User"
     }]
 },{

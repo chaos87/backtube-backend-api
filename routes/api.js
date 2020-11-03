@@ -70,7 +70,7 @@ authenticatedRouter.get('/playlist', PlaylistController.all);
 authenticatedRouter.post('/playlist', PlaylistController.create);
 authenticatedRouter.put('/playlist/:id', PlaylistController.update);
 authenticatedRouter.delete('/playlist/:id', PlaylistController.delete);
-authenticatedRouter.get('/playlist/:id', PlaylistController.find);
+authenticatedRouter.get('/playlist/:id', PlaylistController.getTracks);
 authenticatedRouter.put('/playlist/:id/addFollower', PlaylistController.addFollower);
 // track
 authenticatedRouter.get('/track/:id', TrackController.find);

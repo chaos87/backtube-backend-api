@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Track = mongoose.model(
   "Track",
   new mongoose.Schema({
-    key: String,
+    _id: { type: String, required : true },
     title: String,
     artist: String,
     album: String,
@@ -14,7 +14,9 @@ const Track = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Playlist"
     }],
-  })
+},{
+    timestamps: true,
+})
 );
 
 module.exports = Track;

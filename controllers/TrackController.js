@@ -2,7 +2,7 @@ const TrackModel = require('../models/Track');
 
 const TrackController = {
     find: async (req, res) => {
-        let found = await TrackModel.find({key: req.params.key});
+        let found = await TrackModel.findById(req.params.id);
         res.json(found);
     },
     all: async (req, res) => {
@@ -23,7 +23,7 @@ const TrackController = {
         })
     },
     getPlaylists: async (req, res) => {
-        let found = await TrackModel.find({key: req.params.key}).populate("playlists");
+        let found = await TrackModel.findById(req.params.id).populate("playlists");
         res.json(found);
     }
 }

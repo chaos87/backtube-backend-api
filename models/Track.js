@@ -1,22 +1,26 @@
 const mongoose = require("mongoose");
 
-const Track = mongoose.model(
-  "Track",
-  new mongoose.Schema({
+const trackSchema = new mongoose.Schema({
     _id: { type: String, required : true },
-    title: String,
-    artist: String,
+    title: { type: String, required : true },
+    artist: { type: String, required : true },
     album: String,
-    cover: String,
-    source: String,
-    duration: Number,
+    thumbnail: String,
+    source: { type: String, required : true },
+    musicSrc: { type: String, required : true },
+    duration: { type: Number, required : true },
     playlists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Playlist"
     }],
 },{
     timestamps: true,
+     autoIndex: false,
 })
-);
+
+trackSchema.index({title: 'text', artist: 'text', album: 'text'})
+
+const Track = mongoose.model("Track", trackSchema);
+Track.createIndexes();
 
 module.exports = Track;

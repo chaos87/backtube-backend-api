@@ -65,6 +65,7 @@ authenticatedRouter.post('/uploadAvatar', (req,res) => {
 authenticatedRouter.put('/profile/:id', UserController.update);
 authenticatedRouter.get('/profile/:id', UserController.find);
 authenticatedRouter.get('/profile/:id/playlists', UserController.getPlaylists);
+authenticatedRouter.get('/profile/:id/playlistsNoTracks', UserController.getPlaylistsIdAndTitle);
 // playlist
 authenticatedRouter.get('/playlist', PlaylistController.all);
 authenticatedRouter.post('/playlist', PlaylistController.create);
@@ -72,6 +73,8 @@ authenticatedRouter.put('/playlist/:id', PlaylistController.update);
 authenticatedRouter.delete('/playlist/:id', PlaylistController.delete);
 authenticatedRouter.get('/playlist/:id', PlaylistController.getTracks);
 authenticatedRouter.put('/playlist/:id/addFollower', PlaylistController.addFollower);
+authenticatedRouter.put('/playlist/:id/removeFollower', PlaylistController.removeFollower);
+authenticatedRouter.post('/playlist/search', PlaylistController.search);
 // track
 authenticatedRouter.get('/track/:id', TrackController.find);
 authenticatedRouter.get('/track', TrackController.all);

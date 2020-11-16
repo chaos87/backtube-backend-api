@@ -24,7 +24,6 @@ const UserController = {
         let found = await UserModel.findById(req.params.id);
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
-        console.log(user)
         if (user === undefined || user !== found._id){
             res.status(403).json({success: false, message: 'User not authorized.'})
             return;
@@ -41,24 +40,38 @@ const UserController = {
     },
     getOwnedPlaylists: async (req, res) => {
         let found = await UserModel.findById(req.params.id)
-        .populate("playlistsOwned")
-        .populate("playlistsOwned.tracks");
+        .populate({
+            path: "playlistsOwned",
+            populate: { path: 'tracks' }
+        });
         res.json(found);
     },
     getFollowedPlaylists: async (req, res) => {
         let found = await UserModel.findById(req.params.id)
-        .populate("playlistsFollowed")
-        .populate("playlistsFollowed.tracks");
+        .populate({
+            path: "playlistsFollowed",
+            populate: { path: 'tracks' }
+        })
         res.json(found);
     },
     getPlaylists: async (req,res) => {
         let found = await UserModel.findById(req.params.id)
-        .populate("playlistsFollowed")
-        .populate("playlistsOwned")
-        .populate("playlistsFollowed.tracks")
-        .populate("playlistsOwned.tracks");
+        .populate({
+            path: "playlistsFollowed",
+            populate: [{ path: 'tracks' }, {path: 'creator'}]
+        })
+        .populate('creator')
+        .populate({
+            path: "playlistsOwned",
+            populate: { path: 'tracks' }
+        });
         res.json(found);
-    }
+    },
+    getPlaylistsIdAndTitle: async (req,res) => {
+        let found = await UserModel.findById(req.params.id)
+        .populate("playlistsOwned", "_id title")
+        res.json(found);
+    },
 }
 
 module.exports = UserController;

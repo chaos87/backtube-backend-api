@@ -67,7 +67,7 @@ const PlaylistController = {
             // else create the track and retrieve _id
             TrackModel.findByIdAndUpdate(
                 track._id,
-                Object.assign(track, {$push: { playlists: req.params.id}}),
+                Object.assign(track, {$addToSet: { playlists: req.params.id}}),
                 {
                     upsert: true, new: true, setDefaultsOnInsert: true,
                     useFindAndModify: false
@@ -104,7 +104,14 @@ const PlaylistController = {
                     safe: true,
                     useFindAndModify: false
                 },
-            )
+            ).then(data => {
+                if (data.playlists.length === 1 && data.playlists[0].toString() === req.params.id) {
+                    console.log('DELETE', data.title)
+                    TrackModel.findByIdAndDelete(data._id).catch(err => {
+                        res.status(400).json({success: false, message: err.message})
+                    });
+                }
+            })
             .catch(err => {
                 res.status(400).json({success: false, message: err.message})
             });

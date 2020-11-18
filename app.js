@@ -46,6 +46,8 @@ app.use('/public', backtubeRoutes);
 app.get('/health', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send({"message": "alive & kicking!"})
-})
+});
+
+app.disable('etag');
 
 app.listen(process.env.PORT || 5000, () => console.log(`Example app listening at http://localhost:5000`))

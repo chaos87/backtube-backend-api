@@ -68,7 +68,6 @@ authenticatedRouter.get('/profile/:id/playlists', UserController.getPlaylists);
 authenticatedRouter.get('/profile/:id/playlistsNoTracks', UserController.getPlaylistsIdAndTitle);
 // playlist
 authenticatedRouter.get('/playlist', PlaylistController.all);
-authenticatedRouter.get('/playlists/recent', PlaylistController.getRecent);
 authenticatedRouter.post('/playlist', PlaylistController.create);
 authenticatedRouter.put('/playlist/:id', PlaylistController.update);
 authenticatedRouter.delete('/playlist/:id', PlaylistController.delete);

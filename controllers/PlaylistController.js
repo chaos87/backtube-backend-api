@@ -9,8 +9,11 @@ const PlaylistController = {
         res.json(found);
     },
     getRecent: async (req, res) => {
+        const limit = req.query.limit ? req.query.limit : 20;
         let found = await PlaylistModel.find({}).sort({'updatedAt': -1})
-            .limit(req.query.top);
+            .limit(req.query.limit)
+            .populate('tracks')
+            .populate('creator', 'username avatar');
         res.json(found);
     },
     all: async (req, res) => {

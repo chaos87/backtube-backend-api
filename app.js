@@ -34,12 +34,14 @@ module.exports = cognitoExpress;
 const youtubeRoutes = require('./routes/youtube');
 const bandcampRoutes = require('./routes/bandcamp');
 const authRoutes = require('./routes/auth');
-const backtubeRoutes = require('./routes/api');
+const authenticatedBacktubeRoutes = require('./routes/api');
+const backtubeRoutes = require('./routes/public');
 
 app.use('/youtube', youtubeRoutes);
 app.use('/bandcamp', bandcampRoutes);
 app.use('/auth', authRoutes);
-app.use('/api', backtubeRoutes);
+app.use('/api', authenticatedBacktubeRoutes);
+app.use('/public', backtubeRoutes);
 
 app.get('/health', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

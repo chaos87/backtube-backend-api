@@ -8,6 +8,11 @@ const PlaylistController = {
         let found = await PlaylistModel.findById(req.params.id);
         res.json(found);
     },
+    getRecent: async (req, res) => {
+        let found = await PlaylistModel.find({}).sort({'updatedAt': -1})
+            .limit(req.query.top);
+        res.json(found);
+    },
     all: async (req, res) => {
         let allPlaylists = await PlaylistModel.find();
         res.json(allPlaylists);

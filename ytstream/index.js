@@ -15,7 +15,7 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
     ...opt,
-    quality: 'lowestaudio',
+    quality: 'highestaudio',
     highWaterMark: 1 << 25,
     audioFormat: 'mp3',
     filter: 'audioonly',

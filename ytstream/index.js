@@ -15,7 +15,7 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
       ...opt,
-      quality: 'lowest',
+      quality: 'lowestaudio',
       audioFormat: 'mp3',
       filter (format) {
         return format.container === opt.videoFormat && format.audioBitrate

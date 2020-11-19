@@ -20,6 +20,7 @@ function streamify (uri, opt) {
       audioFormat: 'mp3',
       filter (format) {
         return format.container === opt.videoFormat && format.audioBitrate
+      }
   }
 
   const video = ytdl(uri, opt)

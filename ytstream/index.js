@@ -16,6 +16,7 @@ function streamify (uri, opt) {
   opt = {
     ...opt,
     audioFormat: 'mp3',
+    highWaterMark: 1 << 25
   }
 
   const video = ytdl(uri, opt)

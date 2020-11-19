@@ -15,6 +15,7 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
     ...opt,
+    audioFormat: 'mp3',
   }
 
   const video = ytdl(uri, opt)

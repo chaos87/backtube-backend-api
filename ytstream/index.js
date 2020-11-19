@@ -14,9 +14,12 @@ if (!module.parent) {
 
 function streamify (uri, opt) {
   opt = {
-    ...opt,
-    audioFormat: 'mp3',
-    highWaterMark: 1 << 25
+      ...opt,
+      videoFormat: 'mp4',
+      quality: 'lowest',
+      audioFormat: 'mp3',
+      filter (format) {
+        return format.container === opt.videoFormat && format.audioBitrate
   }
 
   const video = ytdl(uri, opt)

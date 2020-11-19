@@ -15,7 +15,6 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
     ...opt,
-    filter: 'audioonly',
   }
 
   const video = ytdl(uri, opt)

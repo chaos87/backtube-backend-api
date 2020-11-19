@@ -15,7 +15,7 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
     ...opt,
-    quality: 'lowestaudio',
+    quality: 'highest',
     filter: 'audioonly',
   }
 

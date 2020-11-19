@@ -15,7 +15,6 @@ if (!module.parent) {
 function streamify (uri, opt) {
   opt = {
       ...opt,
-      videoFormat: 'mp4',
       quality: 'lowest',
       audioFormat: 'mp3',
       filter (format) {

@@ -16,7 +16,6 @@ function streamify (uri, opt) {
   opt = {
     ...opt,
     quality: 'lowestaudio',
-    audioFormat: 'mp3',
     filter: 'audioonly',
   }
 

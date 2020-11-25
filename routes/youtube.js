@@ -22,6 +22,7 @@ youtubeRouter.get('/stream', (req, res) => {
           ffmpeg.on('error', error => {
               stream.emit('error', error)
               video.end()
+              console.log('Error with video ', req.query.videoId, error.message)
               res.status(500).send(error.message);
           })
         //   output.on('error', error => {

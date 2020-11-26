@@ -1,6 +1,7 @@
 const express = require('express');
 // const bandcamp = require('bandcamp-scraper');
 const bandcamp = require('../tmp/bandcamp');
+const bandcampStream = require('../tmp/bandcamp/stream');
 const { promisify } = require('util');
 
 const getAlbumInfo = promisify(bandcamp.getAlbumInfo);
@@ -38,6 +39,14 @@ bandcampRouter.post('/songs', function (req, res) {
     )
     .catch(e => res.status(400).send(e.stack))
   })
+
+bandcampRouter.get('/stream', function (req, res) {
+  bandcampStream.getTrack(req.query.url).then(function(stream) {
+      stream.pipe(res)
+  }).catch(function(err) {
+      res.status(500).send(err.message)
+  });
+})
 
 
  module.exports = bandcampRouter;

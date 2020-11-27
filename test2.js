@@ -1,10 +1,8 @@
-var bandcamp = require('bandcamp-scraper');
+const ytdl = require('ytdl-core');
 
-var albumUrl = 'http://musique.coeurdepirate.com/album/blonde';
-bandcamp.getAlbumInfo(albumUrl, function(error, albumInfo) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(albumInfo);
-  }
-});
+const getVideoInfo = async (videoId) => {
+    let info = await ytdl.getBasicInfo(videoId);
+    console.log(info)
+}
+
+getVideoInfo('QfukpHu_dUU')

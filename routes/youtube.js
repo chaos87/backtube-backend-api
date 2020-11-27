@@ -37,4 +37,9 @@ youtubeRouter.get('/stream', (req, res) => {
         stream.pipe(res)
     });
 
+youtubeRouter.get('/info', async (req, res) => {
+    let info = await ytdl.getBasicInfo(req.query.videoId);
+    res.json(info)
+})
+
 module.exports = youtubeRouter;

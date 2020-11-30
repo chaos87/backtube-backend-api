@@ -42,7 +42,7 @@ const UserController = {
         let found = await UserModel.findById(req.params.id)
         .populate({
             path: "playlistsOwned",
-            populate: { path: 'tracks' }
+            populate: [{ path: 'tracks' }, {path: 'creator'}]
         });
         res.json(found);
     },
@@ -50,7 +50,7 @@ const UserController = {
         let found = await UserModel.findById(req.params.id)
         .populate({
             path: "playlistsFollowed",
-            populate: { path: 'tracks' }
+            populate: [{ path: 'tracks' }, {path: 'creator'}]
         })
         res.json(found);
     },
@@ -63,7 +63,7 @@ const UserController = {
         .populate('creator')
         .populate({
             path: "playlistsOwned",
-            populate: { path: 'tracks' }
+            populate: [{ path: 'tracks' }, {path: 'creator'}]
         });
         res.json(found);
     },

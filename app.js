@@ -31,14 +31,10 @@ mongoose
 
 module.exports = cognitoExpress;
 
-const youtubeRoutes = require('./routes/youtube');
-const bandcampRoutes = require('./routes/bandcamp');
 const authRoutes = require('./routes/auth');
 const authenticatedBacktubeRoutes = require('./routes/api');
 const backtubeRoutes = require('./routes/public');
 
-app.use('/youtube', youtubeRoutes);
-app.use('/bandcamp', bandcampRoutes);
 app.use('/auth', authRoutes);
 app.use('/api', authenticatedBacktubeRoutes);
 app.use('/public', backtubeRoutes);

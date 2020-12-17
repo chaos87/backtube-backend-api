@@ -40,6 +40,8 @@ curl \
 - [POST] /auth/login: Login (No Authentication needed)
 - [POST] /auth/confirm: Confirm user registration (No Authentication needed)
 - [POST] /auth/sendConfirmCode: Send confirm registration code to user provided email (No Authentication needed)
+- [POST] /auth/forgotPassword: Send forgot password email to user provided email (No Authentication needed)
+- [POST] /auth/resetPassword: Reset user's password using verification code in email (No Authentication needed)
 - [POST] /auth/refresh: Refresh user session (Authentication needed)
 - [PUT] /auth/user: Change username (Authentication needed) (Deprecated soon)
 - [PUT] /api/profile/<id>: Update user profile (Authentication needed)

@@ -147,6 +147,46 @@ cognitoRouter.post('/sendConfirmCode', (req, res) => {
     });
 });
 
+cognitoRouter.post('/forgotPassword', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var userName = req.body.username;
+    var userData = {
+        Username: userName,
+        ClientId: COGNITO_APP_ID
+    }
+    AWS.config.update({ region: pool_region, 'accessKeyId': process.env.AWS_ACCESS_KEY_ID, 'secretAccessKey': process.env.AWS_SECRET_ACCESS_KEY });
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+    cognitoidentityserviceprovider.forgotPassword(userData,
+      function (err, result) {
+          if (err) {
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
+cognitoRouter.post('/resetPassword', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    var userName = req.body.username;
+    var confirmationCode = req.body.code;
+    var newPassword = req.body.password;
+    var userData = {
+        ClientId: COGNITO_APP_ID,
+        ConfirmationCode: confirmationCode,
+        Password: newPassword,
+        Username: userName
+    }
+    AWS.config.update({ region: pool_region, 'accessKeyId': process.env.AWS_ACCESS_KEY_ID, 'secretAccessKey': process.env.AWS_SECRET_ACCESS_KEY });
+    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
+    cognitoidentityserviceprovider.confirmForgotPassword(userData,
+      function (err, result) {
+          if (err) {
+            return res.status(400).json({"error": err.message});
+          }
+          res.json(result)
+    });
+});
+
 cognitoRouter.put('/user', (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     var userName = req.body.username;

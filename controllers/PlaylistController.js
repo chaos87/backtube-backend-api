@@ -153,6 +153,10 @@ const PlaylistController = {
         let found = await PlaylistModel.findById(req.params.id).populate("tracks");
         res.json(found);
     },
+    getTracksCreator: async (req, res) => {
+        let found = await PlaylistModel.findById(req.params.id).populate("tracks").populate("creator");
+        res.json(found);
+    },
     addFollower: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id);
         //check token is authorized

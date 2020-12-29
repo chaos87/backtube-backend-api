@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const playlistSchema = new mongoose.Schema({
   title: String,
+  review: String,
   tracks: [{
       type: String,
       ref: "Track"
@@ -13,13 +14,14 @@ const playlistSchema = new mongoose.Schema({
   followers: [{
       type: String,
       ref: "User"
-  }]
+  }],
+  tags: [String],
 },{
   timestamps: true,
   autoIndex: false,
 })
 
-playlistSchema.index({title: 'text'})
+playlistSchema.index({title: 'text', tags: 'text'})
 
 const Playlist = mongoose.model("Playlist", playlistSchema);
 Playlist.createIndexes();

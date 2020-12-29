@@ -25,7 +25,9 @@ const PlaylistController = {
         const tracks = req.body.tracks;
         let newPlaylist = new PlaylistModel({
             title: req.body.title,
+            review: req.body.review,
             creator: user,
+            tags: req.body.tags,
             tracks: tracks.map(track => track._id)
         });
         tracks.map(track => {
@@ -87,6 +89,8 @@ const PlaylistController = {
 
         })
         found.title = req.body.title;
+        found.review = req.body.review;
+        found.tags = req.body.tags;
         found.save().then(data => {
             res.json(data);
         }).catch(err => {

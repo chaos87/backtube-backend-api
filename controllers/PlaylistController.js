@@ -158,8 +158,13 @@ const PlaylistController = {
         res.json(found);
     },
     getTracksCreator: async (req, res) => {
-        let found = await PlaylistModel.findById(req.params.id).populate("tracks").populate("creator");
-        res.json(found);
+        PlaylistModel.findById(req.params.id).populate("tracks").populate("creator")
+        .then(result => {
+            res.json(result)
+        })
+        .catch(err => {
+            res.status(400).json({success: false, message: err.message})
+        })
     },
     addFollower: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id);

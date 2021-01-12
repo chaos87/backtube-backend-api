@@ -65,9 +65,8 @@ const PlaylistController = {
     update: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id);
         const tracks = req.body.tracks;
-        const removedTracks = found.tracks.map(track => track._id).filter(e => !tracks.map(track => track._id).includes(e))
-        found.tracks = tracks.map(track => track._id);
-        removedTracks.map(track => {
+        const removedTracks = await found.tracks.map(track => track._id).filter(e => !tracks.map(track => track._id).includes(e))
+        await removedTracks.map(track => {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(
                 track._id,
@@ -84,6 +83,7 @@ const PlaylistController = {
             res.status(403).json({success: false, message: 'User not authorized.'})
             return;
         }
+        found.tracks = tracks.map(track => track._id);
         tracks.map(track => {
             // check track exists, if yes retrieve _id
             // else create the track and retrieve _id

@@ -16,7 +16,10 @@ const playlistSchema = new mongoose.Schema({
       ref: "User"
   }],
   tags: [String],
-  private: Boolean,
+  private: {
+    type: Boolean,
+    default: false
+  },
 },{
   timestamps: true,
   autoIndex: false,

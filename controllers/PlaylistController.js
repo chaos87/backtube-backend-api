@@ -177,11 +177,11 @@ const PlaylistController = {
         }
         PlaylistModel.findById(req.params.id).populate("tracks").populate("creator")
         .then(result => {
-            if (!result[0].private || (result[0].private && result[0].creator._id === user)) {
+            if (!result.private || (result.private && result.creator._id === user)) {
                 res.json(result)
             }
             else {
-                res.json([])
+                res.json({})
             }
         })
         .catch(err => {

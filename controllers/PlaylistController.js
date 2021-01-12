@@ -10,7 +10,7 @@ const PlaylistController = {
     },
     getRecent: async (req, res) => {
         const limit = req.query.limit ? req.query.limit : 20;
-        let found = await PlaylistModel.find({}).sort({'updatedAt': -1})
+        let found = await PlaylistModel.find({private: false}).sort({'updatedAt': -1})
             .limit(req.query.limit)
             .populate('tracks')
             .populate('creator', 'username avatar');
@@ -65,7 +65,19 @@ const PlaylistController = {
     update: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id);
         const tracks = req.body.tracks;
+        const removedTracks = found.tracks.map(track => track._id).filter(e => !tracks.map(track => track._id).includes(e))
         found.tracks = tracks.map(track => track._id);
+        removedTracks.map(track => {
+            // remove playlistID from track if track has been removed
+            TrackModel.findByIdAndUpdate(
+                track._id,
+                Object.assign(track, {$pull: { playlists: req.params.id}})
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
+
+        })
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
         if (user !== found.creator){
@@ -158,7 +170,7 @@ const PlaylistController = {
         res.json(found);
     },
     getTracksCreator: async (req, res) => {
-        PlaylistModel.findById(req.params.id).populate("tracks").populate("creator")
+        PlaylistModel.find({ _id: req.params.id, private: false }).populate("tracks").populate("creator")
         .then(result => {
             res.json(result)
         })
@@ -218,9 +230,9 @@ const PlaylistController = {
             populate: [{ path: 'tracks' },{ path: 'creator', select: 'username avatar'}]
         })
 
-        let playlistResultFromTrackOnlyPlaylists = await playlistResultFromTrack.map(el => el.playlists).flat()
+        let playlistResultFromTrackOnlyPlaylists = await playlistResultFromTrack.map(el => el.playlists).flat().filter(el => !el.private)
         playlistResultFromTrackOnlyPlaylists = await playlistResultFromTrackOnlyPlaylists.filter((v,i,a)=>a.findIndex(t=>(t._id.toString() === v._id.toString()))===i)
-        let finalResults = await Array(playlistResultFromTrackOnlyPlaylists, playlistResultFromPlaylist).flat();
+        let finalResults = await Array(playlistResultFromTrackOnlyPlaylists, playlistResultFromPlaylist.filter(el => !el.private)).flat();
         let finalResultsDeduped = await finalResults.filter((v,i,a)=>a.findIndex(t=>(t._id.toString() === v._id.toString()))===i);
         res.json(finalResultsDeduped)
     }

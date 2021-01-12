@@ -64,14 +64,14 @@ const PlaylistController = {
             });
     },
     update: async (req, res) => {
-        let found = await PlaylistModel.findById(req.params.id);
+        let found = await PlaylistModel.findById(req.params.id).populate('tracks');
         const tracks = req.body.tracks;
         const removedTracks = await found.tracks.filter(e => !tracks.map(track => track._id).includes(e._id))
         await removedTracks.map(track => {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(
                 track._id,
-                Object.assign(track, {$pull: { playlists: req.params.id}}),
+                {$pull: { playlists: req.params.id}},
                 {
                     useFindAndModify: false
                 },

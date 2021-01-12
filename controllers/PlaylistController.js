@@ -28,7 +28,8 @@ const PlaylistController = {
             review: req.body.review,
             creator: user,
             tags: req.body.tags,
-            tracks: tracks.map(track => track._id)
+            tracks: tracks.map(track => track._id),
+            private: req.body.private,
         });
         tracks.map(track => {
             // check track exists, if yes retrieve _id

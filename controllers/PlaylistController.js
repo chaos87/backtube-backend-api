@@ -175,7 +175,7 @@ const PlaylistController = {
         if ('accesstoken' in req.headers) {
             user = await getUserId(req.headers.accesstoken);
         }
-        PlaylistModel.find({ _id: req.params.id }).populate("tracks").populate("creator")
+        PlaylistModel.findById(req.params.id).populate("tracks").populate("creator")
         .then(result => {
             if (!result[0].private || (result[0].private && result[0].creator._id === user)) {
                 res.json(result)

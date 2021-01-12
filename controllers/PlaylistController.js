@@ -102,6 +102,7 @@ const PlaylistController = {
         })
         found.title = req.body.title;
         found.review = req.body.review;
+        found.private = req.body.private;
         found.tags = req.body.tags;
         found.save().then(data => {
             res.json(data);

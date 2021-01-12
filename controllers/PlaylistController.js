@@ -170,9 +170,19 @@ const PlaylistController = {
         res.json(found);
     },
     getTracksCreator: async (req, res) => {
-        PlaylistModel.find({ _id: req.params.id, private: false }).populate("tracks").populate("creator")
+        //check is user passed token
+        let user = ''
+        if ('accesstoken' in req.headers) {
+            user = await getUserId(req.headers.accesstoken);
+        }
+        PlaylistModel.find({ _id: req.params.id }).populate("tracks").populate("creator")
         .then(result => {
-            res.json(result)
+            if (!result[0].private || (result[0].private && result[0].creator._id === user)) {
+                res.json(result)
+            }
+            else {
+                res.json([])
+            }
         })
         .catch(err => {
             res.status(400).json({success: false, message: err.message})

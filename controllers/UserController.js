@@ -64,7 +64,7 @@ const UserController = {
         .populate({
             path: "playlistsOwned",
             populate: [{ path: 'tracks' }, {path: 'creator'}],
-            options: { sort: { 'created_at': -1 } }
+            options: { sort: { 'createdAt': -1 } }
         });
         res.json(found);
     },

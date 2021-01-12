@@ -65,7 +65,7 @@ const PlaylistController = {
     update: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id);
         const tracks = req.body.tracks;
-        const removedTracks = await found.tracks.map(track => track._id).filter(e => !tracks.map(track => track._id).includes(e))
+        const removedTracks = await found.tracks.filter(e => !tracks.map(track => track._id).includes(e._id))
         await removedTracks.map(track => {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(

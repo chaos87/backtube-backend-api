@@ -71,7 +71,10 @@ const PlaylistController = {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(
                 track._id,
-                Object.assign(track, {$pull: { playlists: req.params.id}})
+                Object.assign(track, {$pull: { playlists: req.params.id}}),
+                {
+                    useFindAndModify: false
+                },
             )
             .catch(err => {
                 res.status(400).json({success: false, message: err.message})

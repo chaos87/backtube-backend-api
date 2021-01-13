@@ -20,6 +20,10 @@ const playlistSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  themes: [{
+      type: String,
+      ref: "Theme"
+  }],
 },{
   timestamps: true,
   autoIndex: false,

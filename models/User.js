@@ -13,6 +13,10 @@ const User = mongoose.model(
     playlistsFollowed: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Playlist"
+    }],
+    themesCreated: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Theme"
     }]
   },{
     timestamps: true,

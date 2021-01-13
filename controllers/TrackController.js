@@ -6,8 +6,8 @@ const TrackController = {
         res.json(found);
     },
     all: async (req, res) => {
-        let allUsers = await TrackModel.find().limit(100);
-        res.json(allUsers);
+        let allTracks = await TrackModel.find().limit(100);
+        res.json(allTracks);
     },
     create: async (req, res) => {
         let newTrack = new TrackModel(req.body);

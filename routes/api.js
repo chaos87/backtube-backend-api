@@ -7,6 +7,7 @@ authenticatedRouter = express.Router();
 const UserController = require('../controllers/UserController.js');
 const TrackController = require('../controllers/TrackController.js');
 const PlaylistController = require('../controllers/PlaylistController.js');
+const ThemeController = require('../controllers/ThemeController.js');
 
 // Configure aws with your accessKeyId and your secretAccessKey
 AWS.config.update({
@@ -79,6 +80,10 @@ authenticatedRouter.post('/playlist/search', PlaylistController.search);
 authenticatedRouter.get('/track/:id', TrackController.find);
 authenticatedRouter.get('/track', TrackController.all);
 authenticatedRouter.get('/track/:id/playlists', TrackController.getPlaylists);
+// theme
+authenticatedRouter.put('/theme/:id', ThemeController.update);
+authenticatedRouter.delete('/theme/:id', ThemeController.delete);
+authenticatedRouter.post('/theme', ThemeController.create);
 
 // Define Backtube CRUD operations
 authenticatedRouter.get('/helloWorld', (req, res) => {

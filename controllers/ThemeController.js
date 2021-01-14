@@ -82,7 +82,9 @@ const ThemeController = {
         })
     },
     getPlaylists: async (req, res) => {
-        let found = await ThemeModel.findById(req.params.id).populate("playlists");
+        let found = await ThemeModel.findById(req.params.id)
+            .populate("playlists")
+            .populate('creator', 'username avatar');
         res.json(found);
     }
 }

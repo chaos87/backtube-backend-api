@@ -24,7 +24,7 @@ const PlaylistController = {
     create: async (req, res) => {
         let user = await getUserId(req.headers.accesstoken);
         const tracks = req.body.tracks;
-        const themes = req.body.themes;
+        const themes = req.body.private ? [] : req.body.themes;
         let newPlaylist = new PlaylistModel({
             title: req.body.title,
             review: req.body.review,
@@ -90,7 +90,7 @@ const PlaylistController = {
             return;
         }
         const tracks = req.body.tracks;
-        const themes = req.body.themes;
+        const themes = req.body.private ? [] : req.body.themes;
         const removedTracks = await found.tracks.filter(e => !tracks.map(track => track._id).includes(e._id))
         const removedThemes = await found.themes.filter(e => !themes.map(theme => theme._id).includes(e._id))
         await removedTracks.map(track => {

@@ -1,5 +1,6 @@
 const ThemeModel = require('../models/Theme');
 const UserModel = require('../models/User');
+const PlaylistModel = require('../models/Playlist');
 const getUserId = require('../helpers/cognito');
 
 const ThemeController = {
@@ -63,6 +64,7 @@ const ThemeController = {
         })
     },
     delete: async (req, res) => {
+        let found = await ThemeModel.findById(req.params.id)
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
         await UserModel.findByIdAndUpdate(
@@ -74,6 +76,22 @@ const ThemeController = {
         ).catch(err => {
             res.status(400).json({success: false, message: err.message})
         });
+        await found.playlists.map(playlist => {
+            // check track exists, if yes retrieve _id
+            // else create the track and retrieve _id
+            PlaylistModel.findByIdAndUpdate(
+                playlist,
+                {$pull: { themes: req.params.id}},
+                {
+                    safe: true,
+                    useFindAndModify: false
+                },
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
+
+        });
         ThemeModel.findByIdAndDelete(req.params.id)
         .catch(err => {
             res.status(400).json({success: false, message: err.message})
@@ -83,7 +101,10 @@ const ThemeController = {
     },
     getPlaylists: async (req, res) => {
         let found = await ThemeModel.findById(req.params.id)
-            .populate("playlists")
+            .populate({
+                path: "playlists",
+                populate: [{ path: 'tracks' }, {path: 'creator'}]
+            })
             .populate('creator', 'username avatar');
         res.json(found);
     }

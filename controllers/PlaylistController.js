@@ -1,5 +1,6 @@
 const PlaylistModel = require('../models/Playlist');
 const TrackModel = require('../models/Track');
+const ThemeModel = require('../models/Theme');
 const UserModel = require('../models/User');
 const getUserId = require('../helpers/cognito');
 
@@ -23,12 +24,14 @@ const PlaylistController = {
     create: async (req, res) => {
         let user = await getUserId(req.headers.accesstoken);
         const tracks = req.body.tracks;
+        const themes = req.body.themes;
         let newPlaylist = new PlaylistModel({
             title: req.body.title,
             review: req.body.review,
             creator: user,
             tags: req.body.tags,
             tracks: tracks.map(track => track._id),
+            themes: themes.map(theme => theme._id),
             private: req.body.private,
         });
         tracks.map(track => {
@@ -37,6 +40,21 @@ const PlaylistController = {
             TrackModel.findByIdAndUpdate(
                 track._id,
                 Object.assign(track, {$push: { playlists: newPlaylist }}),
+                {
+                    upsert: true, new: true, setDefaultsOnInsert: true,
+                    useFindAndModify: false
+                },
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
+        });
+        themes.map(theme => {
+            // check track exists, if yes retrieve _id
+            // else create the track and retrieve _id
+            ThemeModel.findByIdAndUpdate(
+                theme._id,
+                Object.assign(theme, {$push: { playlists: newPlaylist }}),
                 {
                     upsert: true, new: true, setDefaultsOnInsert: true,
                     useFindAndModify: false
@@ -64,7 +82,7 @@ const PlaylistController = {
             });
     },
     update: async (req, res) => {
-        let found = await PlaylistModel.findById(req.params.id).populate('tracks');
+        let found = await PlaylistModel.findById(req.params.id).populate('tracks').populate('themes');
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
         if (user !== found.creator){
@@ -72,7 +90,9 @@ const PlaylistController = {
             return;
         }
         const tracks = req.body.tracks;
+        const themes = req.body.themes;
         const removedTracks = await found.tracks.filter(e => !tracks.map(track => track._id).includes(e._id))
+        const removedThemes = await found.themes.filter(e => !themes.map(theme => theme._id).includes(e._id))
         await removedTracks.map(track => {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(
@@ -85,7 +105,6 @@ const PlaylistController = {
             .catch(err => {
                 res.status(400).json({success: false, message: err.message})
             });
-
         })
         found.tracks = tracks.map(track => track._id);
         tracks.map(track => {
@@ -104,6 +123,35 @@ const PlaylistController = {
             });
 
         })
+        await removedThemes.map(theme => {
+            // remove playlistID from theme if theme has been removed
+            ThemeModel.findByIdAndUpdate(
+                theme._id,
+                {$pull: { playlists: req.params.id}},
+                {
+                    useFindAndModify: false
+                },
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
+        })
+        found.themes = themes.map(theme => theme._id);
+        themes.map(theme => {
+            // check theme exists, if yes retrieve _id
+            // else create the theme and retrieve _id
+            ThemeModel.findByIdAndUpdate(
+                theme._id,
+                Object.assign(theme, {$addToSet: { playlists: req.params.id}}),
+                {
+                    upsert: true, new: true, setDefaultsOnInsert: true,
+                    useFindAndModify: false
+                },
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
+        })
         found.title = req.body.title;
         found.review = req.body.review;
         found.private = req.body.private;
@@ -113,7 +161,6 @@ const PlaylistController = {
         }).catch(err => {
             res.status(400).json({success: false, message: err.message})
         })
-
     },
     delete: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id)
@@ -124,8 +171,6 @@ const PlaylistController = {
             return;
         }
         await found.tracks.map(track => {
-            // check track exists, if yes retrieve _id
-            // else create the track and retrieve _id
             TrackModel.findByIdAndUpdate(
                 track,
                 {$pull: { playlists: req.params.id}},
@@ -144,7 +189,19 @@ const PlaylistController = {
             .catch(err => {
                 res.status(400).json({success: false, message: err.message})
             });
-
+        });
+        await found.themes.map(theme => {
+            ThemeModel.findByIdAndUpdate(
+                theme,
+                {$pull: { playlists: req.params.id}},
+                {
+                    safe: true,
+                    useFindAndModify: false
+                },
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
         });
         await UserModel.findByIdAndUpdate(
             user,

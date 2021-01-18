@@ -20,7 +20,9 @@ const ThemeController = {
         res.json(found);
     },
     all: async (req, res) => {
-        let allThemes = await ThemeModel.find().limit(10000);
+        let allThemes = await ThemeModel.find()
+        .select("_id title")
+        .limit(10000);
         res.json(allThemes);
     },
     create: async (req, res) => {

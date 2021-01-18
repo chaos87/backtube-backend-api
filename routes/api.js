@@ -84,6 +84,7 @@ authenticatedRouter.get('/track/:id/playlists', TrackController.getPlaylists);
 authenticatedRouter.put('/theme/:id', ThemeController.update);
 authenticatedRouter.delete('/theme/:id', ThemeController.delete);
 authenticatedRouter.post('/theme', ThemeController.create);
+authenticatedRouter.get('/themes', ThemeController.all);
 
 // Define Backtube CRUD operations
 authenticatedRouter.get('/helloWorld', (req, res) => {

@@ -12,12 +12,15 @@ const ThemeController = {
         const limit = req.query.limit ? req.query.limit : 20;
         let found = await ThemeModel.find({}).sort({'createdAt': -1})
             .limit(req.query.limit)
-            .populate('playlists')
+            .populate({
+                path: "playlists",
+                populate: [{ path: 'tracks' }, {path: 'creator'}]
+            })
             .populate('creator', 'username avatar');
         res.json(found);
     },
     all: async (req, res) => {
-        let allThemes = await ThemeModel.find().limit(100);
+        let allThemes = await ThemeModel.find().limit(10000);
         res.json(allThemes);
     },
     create: async (req, res) => {

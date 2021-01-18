@@ -14,6 +14,7 @@ const PlaylistController = {
         let found = await PlaylistModel.find({private: false}).sort({'createdAt': -1})
             .limit(req.query.limit)
             .populate('tracks')
+            .populate('themes')
             .populate('creator', 'username avatar');
         res.json(found);
     },
@@ -237,7 +238,10 @@ const PlaylistController = {
         if ('accesstoken' in req.headers) {
             user = await getUserId(req.headers.accesstoken);
         }
-        PlaylistModel.findById(req.params.id).populate("tracks").populate("creator")
+        PlaylistModel.findById(req.params.id)
+        .populate("tracks")
+        .populate("creator")
+        .populate("themes")
         .then(result => {
             if (!result.private || (result.private && result.creator._id === user)) {
                 res.json(result)
@@ -296,6 +300,7 @@ const PlaylistController = {
     search: async (req, res) => {
         let playlistResultFromPlaylist = await PlaylistModel.find({$text: {$search: req.body.searchString}})
             .populate('tracks')
+            .populate('themes')
             .populate('creator');
         let playlistResultFromTrack = await TrackModel.find({$text: {$search: req.body.searchString}}).populate({
             path: "playlists",

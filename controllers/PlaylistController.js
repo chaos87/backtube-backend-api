@@ -241,7 +241,7 @@ const PlaylistController = {
         PlaylistModel.findById(req.params.id)
         .populate("tracks")
         .populate("creator")
-        .populate("themes")
+        .populate({ path: 'themes', select: '_id title'})
         .then(result => {
             if (!result.private || (result.private && result.creator._id === user)) {
                 res.json(result)

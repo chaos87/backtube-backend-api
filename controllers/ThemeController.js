@@ -108,7 +108,7 @@ const ThemeController = {
         let found = await ThemeModel.findById(req.params.id)
             .populate({
                 path: "playlists",
-                populate: [{ path: 'tracks' }, {path: 'creator'}]
+                populate: [{ path: 'tracks' }, { path: 'themes', select: '_id title' }, {path: 'creator'}]
             })
             .populate('creator', 'username avatar');
         res.json(found);

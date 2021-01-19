@@ -105,13 +105,19 @@ const ThemeController = {
         })
     },
     getPlaylists: async (req, res) => {
-        let found = await ThemeModel.findById(req.params.id)
+        ThemeModel.findById(req.params.id)
             .populate({
                 path: "playlists",
                 populate: [{ path: 'tracks' }, { path: 'themes', select: '_id title' }, {path: 'creator'}]
             })
-            .populate('creator', 'username avatar');
-        res.json(found);
+            .populate('creator', 'username avatar')
+            .then(result => {
+                    res.json(result)
+                }
+            )
+            .catch(err => {
+                res.status(400).json({success: false, message: err.message})
+            });
     }
 }
 

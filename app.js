@@ -17,7 +17,7 @@ const cognitoExpress = new CognitoExpress({
 	region: "us-east-2",
 	cognitoUserPoolId: "us-east-2_a7zHnPmVg",
 	tokenUse: "access", //Possible Values: access | id
-	tokenExpiration: 3600000 //Up to default expiration of 1 hour (3600000 ms)
+	tokenExpiration: 86400000 //Up to default expiration of 1 hour (3600000 ms)
 });
 
 // Connect to MongoDB

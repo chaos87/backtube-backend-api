@@ -3,7 +3,17 @@ const getUserId = require('../helpers/cognito');
 
 const UserController = {
     find: async (req, res) => {
-        let found = await UserModel.findById(req.params.id);
+        let found = await UserModel.findById(req.params.id)
+        .populate({
+            path: "playlistsOwned",
+            populate: [{ path: 'tracks' }, { path: 'themes' }, {path: 'creator'}],
+            options: { sort: { 'createdAt': -1 } }
+        })
+        .populate({
+            path: "themesCreated",
+            populate: [{ path: 'playlists' }, {path: 'creator'}],
+            options: { sort: { 'createdAt': -1 } }
+        });
         res.json(found);
     },
     all: async (req, res) => {

@@ -83,7 +83,9 @@ const PlaylistController = {
             });
     },
     update: async (req, res) => {
-        let found = await PlaylistModel.findById(req.params.id).populate('tracks').populate('themes');
+        let found = await PlaylistModel.findById(req.params.id)
+            .populate('tracks')
+            .populate({ path: 'themes', select: '_id title'});
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
         if (user !== found.creator){

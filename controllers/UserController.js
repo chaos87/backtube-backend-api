@@ -11,7 +11,7 @@ const UserController = {
         })
         .populate({
             path: "themesCreated",
-            populate: [{ path: 'playlists' }, {path: 'creator'}],
+            populate: [{ path: 'playlists', populate: [{ path: 'tracks' }, { path: 'themes' }, { path: 'creator'}] }, {path: 'creator'}],
             options: { sort: { 'createdAt': -1 } }
         });
         res.json(found);

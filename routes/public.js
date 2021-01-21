@@ -6,7 +6,7 @@ const PlaylistController = require('../controllers/PlaylistController.js');
 const ThemeController = require('../controllers/ThemeController.js');
 const UserController = require('../controllers/UserController.js');
 // profile
-authenticatedRouter.get('/profile/:id', UserController.find);
+backtubeRouter.get('/profile/:id', UserController.find);
 // playlist
 backtubeRouter.get('/playlists/recent', PlaylistController.getRecent);
 backtubeRouter.get('/playlist/:id', PlaylistController.getTracksCreator);

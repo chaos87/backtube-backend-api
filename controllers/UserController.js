@@ -7,6 +7,7 @@ const UserController = {
         .populate({
             path: "playlistsOwned",
             populate: [{ path: 'tracks' }, { path: 'themes' }, {path: 'creator'}],
+            match: { private: {$ne: true}},
             options: { sort: { 'createdAt': -1 } }
         })
         .populate({

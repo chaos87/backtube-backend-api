@@ -238,7 +238,8 @@ const PlaylistController = {
         //check is user passed token
         let user = ''
         if ('accesstoken' in req.headers) {
-            user = await getUserId(req.headers.accesstoken);
+            user = await getUserId(req.headers.accesstoken)
+            .catch(err => {console.log(err.message)});
         }
         PlaylistModel.findById(req.params.id)
         .populate("tracks")

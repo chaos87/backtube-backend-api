@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const themeSchema = new mongoose.Schema({
     title: String,
     description: String,
+    thumbnail: String,
     playlists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Playlist"

@@ -31,6 +31,7 @@ const ThemeController = {
         let newTheme = new ThemeModel({
             title: req.body.title,
             description: req.body.description,
+            thumbnail: req.body.thumbnail,
             creator: user,
             tags: req.body.tags,
         });
@@ -60,6 +61,7 @@ const ThemeController = {
             return;
         }
         found.title = req.body.title;
+        found.thumbnail = req.body.thumbnail;
         found.description = req.body.description;
         found.tags = req.body.tags;
         found.save().then(data => {

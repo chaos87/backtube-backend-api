@@ -12,11 +12,11 @@ const PlaylistController = {
     getRecent: async (req, res) => {
         const limit = req.query.limit ? req.query.limit : 20;
         let found = await PlaylistModel.find({private: false}).sort({'createdAt': -1})
-            .limit(req.query.limit)
+            .limit(limit)
             .populate('tracks')
             .populate('themes')
             .populate('creator', 'username avatar');
-        res.json(found);
+        res.json(found.filter(el => el.tracks.length > 2));
     },
     all: async (req, res) => {
         let allPlaylists = await PlaylistModel.find().limit(100);

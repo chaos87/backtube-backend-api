@@ -10,7 +10,7 @@ const ThemeController = {
     },
     getRecent: async (req, res) => {
         const limit = req.query.limit ? req.query.limit : 20;
-        let found = await ThemeModel.find({}).sort({'createdAt': -1})
+        let found = await ThemeModel.find({"description": {"$exists" : true, "$ne": ""}}).sort({'createdAt': -1})
             .limit(req.query.limit)
             .populate({
                 path: "playlists",

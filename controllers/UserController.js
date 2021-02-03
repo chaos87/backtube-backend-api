@@ -22,7 +22,16 @@ const UserController = {
         res.json(allUsers);
     },
     create: async (req, res) => {
-        let newUser = new UserModel(req.body);
+        await UserModel.findById(req.body.id).then(result => {
+            if (result){
+                res.status(400).json({success: false, message: 'User already exists'})
+                return;
+            }
+        })
+        let newUser = new UserModel({
+            _id: req.body.id,
+            username: req.body.username
+        });
         newUser.save()
             .then(data => {
                 res.json(data);

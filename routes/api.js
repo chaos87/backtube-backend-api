@@ -63,6 +63,7 @@ authenticatedRouter.post('/uploadAvatar', (req,res) => {
 	});
 })
 // profile
+authenticatedRouter.post('/profile', UserController.create);
 authenticatedRouter.put('/profile/:id', UserController.update);
 authenticatedRouter.get('/profile/:id', UserController.find);
 authenticatedRouter.get('/profile/:id/playlists', UserController.getPlaylists);

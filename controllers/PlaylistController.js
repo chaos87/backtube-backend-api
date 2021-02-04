@@ -3,6 +3,7 @@ const TrackModel = require('../models/Track');
 const ThemeModel = require('../models/Theme');
 const UserModel = require('../models/User');
 const getUserId = require('../helpers/cognito');
+const mongoose = require('mongoose');
 
 const PlaylistController = {
     find: async (req, res) => {
@@ -85,7 +86,7 @@ const PlaylistController = {
     update: async (req, res) => {
         let found = await PlaylistModel.findById(req.params.id)
             .populate('tracks')
-            .populate({ path: 'themes', select: '_id title'});
+            .populate('themes');
         //check token is authorized
         let user = await getUserId(req.headers.accesstoken);
         if (user !== found.creator){
@@ -144,14 +145,14 @@ const PlaylistController = {
             // check theme exists, if yes retrieve _id
             // else create the theme and retrieve _id
             ThemeModel.findByIdAndUpdate(
-                theme._id,
-                Object.assign(theme, {$addToSet: { playlists: req.params.id}}),
+                mongoose.Types.ObjectId(theme._id),
+                {$push: { playlists: req.params.id}},
                 {
-                    upsert: true, new: true, setDefaultsOnInsert: true,
                     useFindAndModify: false
                 },
             )
             .catch(err => {
+                console.log('Et merde', err.message)
                 res.status(400).json({success: false, message: err.message})
             });
         })

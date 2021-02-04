@@ -145,7 +145,7 @@ const PlaylistController = {
             // check theme exists, if yes retrieve _id
             // else create the theme and retrieve _id
             ThemeModel.findByIdAndUpdate(
-                mongoose.Types.ObjectId(theme._id),
+                theme._id,
                 {$addToSet: { playlists: req.params.id}},
                 {
                     useFindAndModify: false

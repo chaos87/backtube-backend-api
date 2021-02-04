@@ -146,13 +146,12 @@ const PlaylistController = {
             // else create the theme and retrieve _id
             ThemeModel.findByIdAndUpdate(
                 mongoose.Types.ObjectId(theme._id),
-                {$push: { playlists: req.params.id}},
+                {$addToSet: { playlists: req.params.id}},
                 {
                     useFindAndModify: false
                 },
             )
             .catch(err => {
-                console.log('Et merde', err.message)
                 res.status(400).json({success: false, message: err.message})
             });
         })

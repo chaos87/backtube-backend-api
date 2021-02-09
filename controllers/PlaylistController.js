@@ -95,8 +95,8 @@ const PlaylistController = {
         }
         const tracks = req.body.tracks;
         const themes = req.body.private ? [] : req.body.themes;
-        const removedTracks = await found.tracks.filter(e => !tracks.map(track => track._id).includes(e._id))
-        const removedThemes = await found.themes.filter(e => !themes.map(theme => theme._id).includes(e._id))
+        const removedTracks = await found.tracks.filter(({ _id: id1 }) => !tracks.some(({ _id: id2 }) => id2 === id1));
+        const removedThemes = await found.themes.filter(({ _id: id1 }) => !themes.some(({ _id: id2 }) => id2.toString() === id1.toString()));
         await removedTracks.map(track => {
             // remove playlistID from track if track has been removed
             TrackModel.findByIdAndUpdate(
